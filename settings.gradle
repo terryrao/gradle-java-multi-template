@@ -1,2 +1,6 @@
 // 根项目
 rootProject.name = 'gradle-java-multi-template'
+include 'cusotmer-example'
+include 'provider-example'
+include 'eureka-server'
+

@@ -1,35 +1,50 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 //必须位于顶部
 plugins {
-    id 'java'
     //gradle 扫描工具
-    id 'com.gradle.build-scan' version '2.0.2' apply false
+    id 'com.gradle.build-scan' version '2.0.2'
     id 'org.springframework.boot' version '2.1.7.RELEASE' apply false
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE' apply false
 
 }
 
 ext {
     springCloudVersion = 'Greenwich.SR2'
-    jmockitVersion = "1.8"
+    jmockitVersion = "1.47"
     commonsLang3Version = "3.0"
 }
 
 allprojects {
-    group = "com.github.terryrao"
-    version = "1.0"
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            name "aliyunmaven"
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
+        }
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/release" }
+    }
 
 }
 
 subprojects {
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = "com.github.terryrao"
+    version = "1.0"
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencyManagement {
         imports {
-            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+            mavenBom SpringBootPlugin.BOM_COORDINATES
             mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
         }
 
@@ -41,16 +56,11 @@ subprojects {
 
     //公共依赖
     dependencies {
-        complementation "org.springframework.boot:spring-boot-starter"
-        testComplementation "org.jmockit:jmockit:${jmockitVersion}"
+        testImplementation "org.jmockit:jmockit:${jmockitVersion}"
     }
 }
 
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-}
-jar {
-    enabled = false
-}
+//jar {
+//    enabled = false
+//}
